@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-background: #0A0A0A;
+  --color-foreground: #FAFAFA;
+  --color-card: #1A1A1A;
+  --color-card-foreground: #FAFAFA;
+  --color-primary: #FF8400;
+  --color-primary-foreground: #111111;
+  --color-secondary: #2E2E2E;
+  --color-secondary-foreground: #FAFAFA;
+  --color-muted: #2E2E2E;
+  --color-muted-foreground: #B8B9B6;
+  --color-accent: #111111;
+  --color-accent-foreground: #FAFAFA;
+  --color-destructive: #FF5C33;
+  --color-destructive-foreground: #FAFAFA;
+  --color-border: #2E2E2E;
+  --color-input: #111111;
+  --color-ring: #666666;
+
+  --color-success: #222924;
+  --color-success-foreground: #B6FFCE;
+  --color-warning: #291C0F;
+  --color-warning-foreground: #FF8400;
+  --color-info: #222229;
+  --color-info-foreground: #B2B2FF;
+  --color-error: #24100B;
+  --color-error-foreground: #FF5C33;
+
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #6B7280;
+  --color-text-tertiary: #4B5563;
+  --color-text-muted: #525252;
+
+  --color-bg-page: #0A0A0A;
+  --color-bg-surface: #0F0F0F;
+  --color-bg-elevated: #1A1A1A;
+  --color-bg-input: #111111;
+
+  --color-border-primary: #2A2A2A;
+  --color-border-secondary: #2A2A2A;
+  --color-border-focus: #10B981;
+
+  --color-green-primary: #22C55E;
+  --color-amber-accent: #F59E0B;
+  --color-blue-accent: #3B82F6;
+  --color-orange-accent: #F97316;
+  --color-red-accent: #EF4444;
+
+  --color-accent-green: #10B981;
+
+  --color-syn-function: #FFC799;
+  --color-syn-keyword: #A0A0A0;
+  --color-syn-number: #FFC799;
+  --color-syn-operator: #A0A0A0;
+  --color-syn-property: #A0A0A0;
+  --color-syn-string: #99FFE4;
+  --color-syn-type: #FFC799;
+  --color-syn-variable: #FFFFFF;
+
+  --radius-sm: 0;
+  --radius-md: 16px;
+  --radius-lg: 999px;
+  --radius-xl: 24px;
+
+  --font-sans: Geist, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background-color: #0A0A0A;
+  color: #FAFAFA;
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background-color: #FF8400;
+  color: #111111;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2E2E2E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2E2E2E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8B9B6;
 }

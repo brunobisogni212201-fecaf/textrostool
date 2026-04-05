@@ -1,0 +1,16 @@
+export {
+  LeaderboardRow,
+  LeaderboardRowCode,
+  type LeaderboardRowCodeProps,
+  LeaderboardRowLanguage,
+  type LeaderboardRowLanguageProps,
+  type LeaderboardRowProps,
+  LeaderboardRowScore,
+  type LeaderboardRowScoreProps,
+  type LeaderboardRowScoreVariantProps,
+  type LeaderboardRowVariantProps,
+  leaderboardRow,
+  leaderboardRowCode,
+  leaderboardRowLanguage,
+  leaderboardRowScore,
+} from "@/components/ui/leaderboard-row";
