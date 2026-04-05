@@ -1,26 +1,26 @@
 # DevRoast
 
-Brutally honest code reviews with roast mode.
+Análises de código com honestidade brutal e modo roast opcional.
 
-## Features
+## Funcionalidades
 
-- **Code Submission** - Paste code in multiple languages (JavaScript, TypeScript, Python, Rust, Go, Java, C++, C#)
-- **Roast Mode** - Maximum sarcasm enabled toggle for comedic feedback
-- **Score Rating** - 0-10 scale with severity indicators (critical/warning/good)
-- **Leaderboard** - See the worst code rankings (lowest score = worst code)
-- **Syntax Highlighting** - Beautiful code display with Shiki
+- **Envio de Código** - Cole código em várias linguagens (JavaScript, TypeScript, Python, Rust, Go, Java, C++, C#)
+- **Modo Roast** - Ative o sarcasmo máximo para feedbacks cômicos
+- **Pontuação** - Escala de 0-10 com indicadores de severidade (crítico/atenção/bom)
+- **Ranking** - Veja os piores códigos ranqueados (menor nota = pior código)
+- **Destaque de Sintaxe** - Exibição bonita de código com Shiki
 
-## Quick Start
+## Como Começar
 
 ```bash
 npm install
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) with your browser.
+Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
-## Tech Stack
+## Tecnologias
 
 - Next.js 16.1.6, TypeScript, Tailwind CSS v4, Biome, Shiki
-- Dark theme by default
-- Mobile-first responsive design
+- Tema escuro por padrão
+- Design responsivo mobile-first

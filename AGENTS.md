@@ -40,10 +40,9 @@ npm run format   # Biome format
 npm run check   # Lint + format
 ```
 
-## Key Files
+## Key Directories
 
-- `src/app/globals.css` - Global styles & design tokens
-- `src/app/layout.tsx` - Root layout with fonts
-- `src/app/page.tsx` - Homepage with code editor
-- `src/components/ui/` - UI component library
-- `src/components/features/` - Feature components
+- `src/app/` - Next.js app router pages
+- `src/components/ui/` - Generic reusable components
+- `src/components/features/` - Domain-specific components
+- `src/components/layout/` - Layout components
