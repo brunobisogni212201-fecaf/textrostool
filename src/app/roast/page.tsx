@@ -1,15 +1,25 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { PageContainer } from "@/components/layout";
+import { useMemo, useState } from "react";
+import { InteractiveCodeEditor } from "@/app/components/features/editor/code-editor";
+import { PageContainer } from "@/app/components/layout";
 import { Button, Toggle } from "@/components/ui";
-import { CodeBlock } from "@/components/ui/code-block";
+import {
+  CLOUD_PROVIDERS,
+  type CloudProvider,
+  generateCloudImplementationLines,
+} from "@/lib/devops/cloud-implementation-lines";
+import {
+  type PopularStackLanguageMode,
+  resolvePopularStackLanguage,
+} from "@/lib/highlight/web-stack-language";
 
 export default function RoastPage() {
   const router = useRouter();
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("javascript");
+  const [language, setLanguage] = useState<PopularStackLanguageMode>("auto");
+  const [cloud, setCloud] = useState<CloudProvider>("azure");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roastMode, setRoastMode] = useState(true);
 
@@ -23,20 +33,46 @@ export default function RoastPage() {
   };
 
   const languages = [
+    { value: "auto", label: "Auto (Popular Stack)" },
     { value: "javascript", label: "JavaScript" },
     { value: "typescript", label: "TypeScript" },
+    { value: "jsx", label: "JSX" },
+    { value: "tsx", label: "TSX" },
+    { value: "html", label: "HTML" },
+    { value: "css", label: "CSS" },
+    { value: "json", label: "JSON" },
     { value: "python", label: "Python" },
-    { value: "rust", label: "Rust" },
     { value: "go", label: "Go" },
     { value: "java", label: "Java" },
-    { value: "cpp", label: "C++" },
-    { value: "csharp", label: "C#" },
+    { value: "ruby", label: "Ruby" },
+    { value: "rails", label: "Ruby on Rails" },
+    { value: "sql", label: "SQL" },
+    { value: "nosql", label: "NoSQL" },
+    { value: "shell", label: "Shell" },
+    { value: "react-native", label: "React Native" },
+    { value: "flutter", label: "Flutter" },
+    { value: "swift", label: "Swift" },
   ];
 
+  const resolvedLanguage = useMemo(
+    () => resolvePopularStackLanguage(code, language),
+    [code, language],
+  );
+
+  const implementationLines = useMemo(
+    () =>
+      generateCloudImplementationLines({
+        language: resolvedLanguage,
+        cloud,
+        appName: "devroast-app",
+      }),
+    [resolvedLanguage, cloud],
+  );
+
   return (
-    <main className="min-h-[calc(100vh-56px)] bg-background">
-      <PageContainer className="pt-16 lg:pt-20 pb-8 space-y-8">
-        <div className="text-center space-y-3">
+    <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
+      <PageContainer className="flex flex-col items-center justify-center w-full max-w-[960px] space-y-12 lg:space-y-16 mx-auto">
+        <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl lg:text-5xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
             roast_my_code
@@ -46,20 +82,38 @@ export default function RoastPage() {
           </p>
         </div>
 
-        <div className="w-full max-w-[780px] mx-auto space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="w-full max-w-[780px] flex flex-col items-center space-y-6 md:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full px-2 gap-4">
             <div className="flex items-center gap-2">
               <span className="text-text-secondary font-mono text-sm">
                 language:
               </span>
               <select
                 value={language}
-                onChange={(e) => setLanguage(e.target.value)}
+                onChange={(e) =>
+                  setLanguage(e.target.value as PopularStackLanguageMode)
+                }
                 className="bg-bg-input border border-border-primary rounded-[radius-md] px-3 py-1.5 text-sm font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               >
                 {languages.map((lang) => (
                   <option key={lang.value} value={lang.value}>
                     {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary font-mono text-sm">
+                cloud:
+              </span>
+              <select
+                value={cloud}
+                onChange={(e) => setCloud(e.target.value as CloudProvider)}
+                className="bg-bg-input border border-border-primary rounded-[radius-md] px-3 py-1.5 text-sm font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                {CLOUD_PROVIDERS.map((provider) => (
+                  <option key={provider} value={provider}>
+                    {provider}
                   </option>
                 ))}
               </select>
@@ -72,17 +126,27 @@ export default function RoastPage() {
             </div>
           </div>
 
-          <div className="relative">
-            <textarea
+          <div className="relative w-full">
+            <InteractiveCodeEditor
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="// paste your terrible code here..."
-              className="w-full h-64 md:h-80 lg:h-[300px] bg-bg-input border border-border-primary rounded-[radius-md] p-3 lg:p-4 font-mono text-xs lg:text-sm text-foreground placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-              spellCheck={false}
+              onChange={setCode}
+              language={language}
+              className="w-full"
             />
-            <div className="absolute bottom-3 right-3 text-text-tertiary font-mono text-xs">
+            <div className="absolute bottom-3 right-3 text-text-tertiary font-mono text-xs z-30 pointer-events-none">
               {code.length} chars
             </div>
+          </div>
+
+          <div className="w-full rounded-[radius-md] border border-border-primary bg-bg-surface overflow-hidden">
+            <div className="px-4 py-3 border-b border-border-primary flex flex-wrap gap-3 items-center text-xs font-mono">
+              <span className="text-text-secondary">implementation lines:</span>
+              <span className="text-accent-green">{resolvedLanguage}</span>
+              <span className="text-text-tertiary">via {cloud}</span>
+            </div>
+            <pre className="p-4 font-mono text-xs text-text-secondary overflow-x-auto leading-6">
+              <code>{implementationLines.join("\n")}</code>
+            </pre>
           </div>
         </div>
 
@@ -96,25 +160,6 @@ export default function RoastPage() {
             {isSubmitting ? "preparing your roast..." : "$ roast_my_code"}
           </Button>
         </div>
-
-        {code && (
-          <div className="w-full max-w-[780px] mx-auto space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="text-accent-green font-mono text-xs lg:text-sm font-bold">
-                {"//"}
-              </span>
-              <span className="text-text-secondary font-mono text-xs lg:text-sm">
-                preview
-              </span>
-            </div>
-            <div className="rounded-[radius-md] border border-border-primary overflow-hidden">
-              <CodeBlock
-                code={code || "// your code will appear here"}
-                language={language}
-              />
-            </div>
-          </div>
-        )}
       </PageContainer>
     </main>
   );

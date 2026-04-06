@@ -6,9 +6,9 @@ import {
   LeaderboardRowCode,
   LeaderboardRowLanguage,
   LeaderboardRowScore,
-} from "@/components/features/leaderboard";
-import { ScoreRing } from "@/components/features/score";
-import { PageContainer } from "@/components/layout";
+} from "@/app/components/features/leaderboard";
+import { ScoreRing } from "@/app/components/features/score";
+import { PageContainer } from "@/app/components/layout";
 import { Button } from "@/components/ui";
 
 const leaderboardData = [
@@ -81,9 +81,9 @@ export default function LeaderboardPage() {
   const userScore = 5.8;
 
   return (
-    <main className="min-h-[calc(100vh-56px)] bg-background">
-      <PageContainer className="py-8 md:py-12 space-y-6 md:space-y-8">
-        <div className="text-center space-y-2">
+    <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
+      <PageContainer className="flex flex-col items-center justify-center w-full max-w-[960px] space-y-12 lg:space-y-16 mx-auto">
+        <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
             leaderboard
@@ -93,61 +93,63 @@ export default function LeaderboardPage() {
           </p>
         </div>
 
-        <div className="bg-card border border-border-primary rounded-[radius-md] p-4 md:p-6">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <ScoreRing score={userScore} maxScore={10} size="md" />
-              <div>
-                <div className="font-mono text-text-primary text-sm md:text-base">
-                  your_rank
+        <div className="w-full flex flex-col items-center space-y-8 md:space-y-12">
+          <div className="w-full max-w-[780px] bg-card border border-border-primary rounded-[radius-md] p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start sm:justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <ScoreRing score={userScore} maxScore={10} size="md" />
+                <div>
+                  <div className="font-mono text-text-primary text-sm md:text-base">
+                    your_rank
+                  </div>
+                  <div className="font-mono text-xl md:text-2xl font-bold text-foreground">
+                    #{userRank}
+                  </div>
+                </div>
+              </div>
+              <div className="text-center sm:text-right">
+                <div className="font-mono text-text-secondary text-xs md:text-sm">
+                  your_score
                 </div>
                 <div className="font-mono text-xl md:text-2xl font-bold text-foreground">
-                  #{userRank}
+                  {userScore}/10
                 </div>
               </div>
             </div>
-            <div className="text-center sm:text-right">
-              <div className="font-mono text-text-secondary text-xs md:text-sm">
-                your_score
-              </div>
-              <div className="font-mono text-xl md:text-2xl font-bold text-foreground">
-                {userScore}/10
-              </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
+                {"//"}
+              </span>
+              <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
+                top_roasts
+              </span>
+            </div>
+
+            <div className="w-full max-w-[960px] rounded-[radius-md] border border-border-primary overflow-hidden">
+              {leaderboardData.map((entry) => (
+                <LeaderboardRow key={entry.rank} rank={entry.rank}>
+                  <LeaderboardRowScore severity={getScoreSeverity(entry.score)}>
+                    {entry.score.toFixed(1)}
+                  </LeaderboardRowScore>
+                  <LeaderboardRowCode author={entry.author}>
+                    {entry.codePreview}
+                  </LeaderboardRowCode>
+                  <LeaderboardRowLanguage>
+                    {entry.language}
+                  </LeaderboardRowLanguage>
+                </LeaderboardRow>
+              ))}
             </div>
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
-              {"//"}
-            </span>
-            <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
-              top_roasts
-            </span>
+          <div className="flex justify-center">
+            <Link href="/roast">
+              <Button className="w-full sm:w-auto">$ try_to_rank_higher</Button>
+            </Link>
           </div>
-
-          <div className="rounded-[radius-md] border border-border-primary overflow-hidden">
-            {leaderboardData.map((entry) => (
-              <LeaderboardRow key={entry.rank} rank={entry.rank}>
-                <LeaderboardRowScore severity={getScoreSeverity(entry.score)}>
-                  {entry.score.toFixed(1)}
-                </LeaderboardRowScore>
-                <LeaderboardRowCode author={entry.author}>
-                  {entry.codePreview}
-                </LeaderboardRowCode>
-                <LeaderboardRowLanguage>
-                  {entry.language}
-                </LeaderboardRowLanguage>
-              </LeaderboardRow>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <Link href="/roast">
-            <Button className="w-full sm:w-auto">$ try_to_rank_higher</Button>
-          </Link>
         </div>
       </PageContainer>
     </main>

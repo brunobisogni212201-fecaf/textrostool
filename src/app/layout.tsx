@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
-import { Navbar } from "@/components/layout";
+import { Navbar } from "@/app/components/layout";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({

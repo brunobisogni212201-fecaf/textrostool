@@ -6,10 +6,10 @@ import {
   AnalysisCardHeader,
   AnalysisCardRoot,
   AnalysisCardTitle,
-} from "@/components/features/analysis";
-import { DiffLine } from "@/components/features/diff";
-import { ScoreRing } from "@/components/features/score";
-import { PageContainer } from "@/components/layout";
+} from "@/app/components/features/analysis";
+import { DiffLine } from "@/app/components/features/diff";
+import { ScoreRing } from "@/app/components/features/score";
+import { PageContainer } from "@/app/components/layout";
 import { BadgeDot, Button } from "@/components/ui";
 import { CodeBlock } from "@/components/ui/code-block";
 
@@ -32,9 +32,9 @@ const roastResults = {
 
 export default function ResultsPage() {
   return (
-    <main className="min-h-[calc(100vh-56px)] bg-background">
-      <PageContainer className="py-8 md:py-12 space-y-6 md:space-y-8">
-        <div className="text-center space-y-3 md:space-y-4">
+    <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
+      <PageContainer className="flex flex-col w-full max-w-[780px] space-y-12 lg:space-y-16 mx-auto">
+        <div className="text-center w-full flex flex-col items-center space-y-4 md:space-y-6 max-w-3xl">
           <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
             roast_complete
@@ -52,9 +52,9 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 md:gap-4">
+        <div className="grid grid-cols-3 gap-2 md:gap-4 w-full">
           <div className="bg-card border border-border-primary rounded-[radius-md] p-3 md:p-4 text-center">
-            <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-1">
+            <div className="flex w-full items-center justify-center gap-1.5 md:gap-2 mb-1">
               <BadgeDot variant="critical" />
               <span className="font-mono text-lg md:text-2xl font-bold text-foreground">
                 {roastResults.critical}
@@ -86,8 +86,8 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="space-y-3 md:space-y-4">
-          <div className="flex items-center gap-2">
+        <div className="space-y-3 md:space-y-4 w-full">
+          <div className="flex w-full items-center gap-2">
             <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
               {"//"}
             </span>
@@ -100,8 +100,8 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="space-y-3 md:space-y-4">
-          <div className="flex items-center gap-2">
+        <div className="space-y-3 md:space-y-4 w-full">
+          <div className="flex w-full items-center gap-2">
             <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
               {"//"}
             </span>
@@ -169,8 +169,8 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="space-y-3 md:space-y-4">
-          <div className="flex items-center gap-2">
+        <div className="space-y-3 md:space-y-4 w-full">
+          <div className="flex w-full items-center gap-2">
             <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
               {"//"}
             </span>
@@ -212,7 +212,7 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row justify-center w-full gap-3 sm:gap-4">
           <Link href="/roast">
             <Button variant="secondary" className="w-full sm:w-auto">
               $ roast_another

@@ -6,16 +6,16 @@ import {
   AnalysisCardHeader,
   AnalysisCardRoot,
   AnalysisCardTitle,
-} from "@/components/features/analysis";
-import { DiffLine } from "@/components/features/diff";
+} from "@/app/components/features/analysis";
+import { DiffLine } from "@/app/components/features/diff";
 import {
   LeaderboardRow,
   LeaderboardRowCode,
   LeaderboardRowLanguage,
   LeaderboardRowScore,
-} from "@/components/features/leaderboard";
-import { ScoreRing } from "@/components/features/score";
-import { PageContainer } from "@/components/layout";
+} from "@/app/components/features/leaderboard";
+import { ScoreRing } from "@/app/components/features/score";
+import { PageContainer } from "@/app/components/layout";
 import { Badge, BadgeDot, Button, Toggle } from "@/components/ui";
 import { CodeBlock } from "@/components/ui/code-block";
 

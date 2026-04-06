@@ -24,3 +24,16 @@ Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 - Next.js 16.1.6, TypeScript, Tailwind CSS v4, Biome, Shiki
 - Tema escuro por padrão
 - Design responsivo mobile-first
+
+## Workflow Obrigatório Para Agentes
+
+Este projeto adota um fluxo mandatório para execução de tarefas com agentes e automações.
+
+- Regra principal: seguir **sempre** o workflow definido em `AGENTS.md`
+- Aplica para: Codex, Gemini, Claude, OpenCode e execução via terminal
+- Prompt base reutilizável: `PROMPT_WORKFLOW.md`
+
+Antes de iniciar qualquer implementação, leia:
+
+1. `AGENTS.md` (política e sequência obrigatória)
+2. `PROMPT_WORKFLOW.md` (header padrão para prompts)

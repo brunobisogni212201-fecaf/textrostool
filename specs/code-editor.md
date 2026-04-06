@@ -90,3 +90,36 @@ O Shiki já tem detecção automática de linguagem via `highlight.js`. Podemos 
 5. **Tamanho Inicial**: O editor deve começar vazio ou com placeholder estilizado?
 
 6. **Copy/Paste**: Devemos suportar copy do código destacado?
+
+## Brainstorm 2026-04-06
+
+### Visão Geral
+
+- **Input Layer**: `<textarea>` 100% transparente com `caret-color` visível para permitir edição/colagem nativa.
+- **Highlight Layer**: `<pre><code>` posicionado atrás do textarea usando `pointer-events: none`. Conteúdo gerado via `shiki.codeToHtml` rodando em Web Worker/edge? Para MVP, rodaremos no cliente com `createHighlighter` compartilhado.
+- **Line Numbers**: `<div>` colado à esquerda, com `overflow: hidden`, sincronizado via event `scrollTop` do textarea.
+- **Detecção de linguagem**: heurística leve baseada em extensão/keywords + fallback `auto` do Shiki quando sem override manual.
+- **Manual Override**: dropdown minimalista (provavelmente `Select` custom) com opção "Auto" default.
+
+### Fluxo do Usuário
+
+1. Usuário cola código → `onChange` atualiza `rawCode`.
+2. Disparamos debounce (~250ms) para gerar highlight HTML.
+3. Detectamos linguagem (caso `languageMode === "auto"`). Exibimos label "Detectado: TypeScript" ao lado do seletor.
+4. Render `<pre dangerouslySetInnerHTML>` com classes Tailwind (`font-mono`, `text-sm`).
+5. Scroll do textarea atualiza scroll do highlight + coluna de números (pattern já usado na home atual, replicaremos com hook).
+6. Se o snippet exceder ~5.000 linhas, exibimos aviso persistente e estimativa de tokens (`tokens ≈ caracteres / 4`) próxima ao CTA.
+
+### Considerações Técnicas
+
+- **Estado**: `rawCode`, `manualLanguage`, `detectedLanguage`, `highlightHtml`, `isHighlighting`, `tokenEstimate`.
+- **Hooks utilitários**: `useShikiHighlighter` (singleton), `useCodeDetection` (regex heurísticas), `useSyncedScroll`.
+- **Aprimoramentos futuros**: copy button, temas (dark/light), export style Ray.so.
+- **Fallback**: se Shiki falhar, exibir texto simples com classes `text-text-secondary`.
+- **Execução server-side**: highlighter roda em server action/worker (Edge) para evitar bundle pesado; textarea envia código e recebe HTML + linguagem detectada. Cachear instância do highlighter nesse ambiente.
+
+### Perguntas para o Usuário
+
+1. Precisamos armazenar o HTML destacado ou apenas o código + linguagem? (impacta Drizzle). **Resposta: apenas código + linguagem.**
+2. Precisamos limitar tamanho do input? (performance > 5k linhas). **Resposta: avisar e estimar tokens quando exceder ~5k linhas.**
+3. Podemos depender somente de Shiki no cliente ou precisamos de SSR/worker para performance? **Resposta: processar server-side/worker.**

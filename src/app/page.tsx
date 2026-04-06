@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
-import { PageContainer } from "@/components/layout";
+import { useState } from "react";
+import { InteractiveCodeEditor } from "@/app/components/features/editor/code-editor";
+import { PageContainer } from "@/app/components/layout";
 import {
   Button,
   LeaderboardRow,
@@ -37,17 +38,6 @@ export default function HomePage() {
   const [code, setCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roastMode, setRoastMode] = useState(true);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const lineNumbersRef = useRef<HTMLDivElement>(null);
-
-  const lineCount = code.split("\n").length || 1;
-  const lineNumbers = Array.from({ length: lineCount }, (_, i) => i + 1);
-
-  const handleScroll = useCallback(() => {
-    if (textareaRef.current && lineNumbersRef.current) {
-      lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
-    }
-  }, []);
 
   const handleSubmit = async () => {
     if (!code.trim()) return;
@@ -58,13 +48,13 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-56px)] bg-background">
+    <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
       <PageContainer
         width="full"
-        className="pt-16 lg:pt-20 pb-8 space-y-8 lg:space-y-12"
+        className="flex flex-col items-center justify-center w-full max-w-[960px] space-y-12 lg:space-y-24 mx-auto"
       >
         {/* Hero Section */}
-        <div className="text-center space-y-3">
+        <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <div className="flex items-center justify-center gap-3">
             <span className="text-accent-green font-mono text-3xl lg:text-5xl font-bold">
               $
@@ -80,53 +70,17 @@ export default function HomePage() {
         </div>
 
         {/* Code Editor */}
-        <div className="w-full max-w-[780px] mx-auto space-y-3">
-          <div className="rounded-[radius-md] border border-border-primary overflow-hidden">
-            {/* Window Header */}
-            <div className="h-10 bg-bg-surface border-b border-border-primary flex items-center gap-2 px-4">
-              <div className="w-3 h-3 rounded-full bg-red-accent" />
-              <div className="w-3 h-3 rounded-full bg-amber-accent" />
-              <div className="w-3 h-3 rounded-full bg-accent-green" />
-            </div>
-
-            {/* Code Area with Line Numbers */}
-            <div className="flex h-[360px] bg-bg-input">
-              {/* Line Numbers */}
-              <div
-                ref={lineNumbersRef}
-                className="w-12 bg-bg-surface border-r border-border-primary overflow-hidden select-none"
-              >
-                <div className="py-4 px-3 flex flex-col gap-2">
-                  {lineNumbers.map((num) => (
-                    <span
-                      key={num}
-                      className="font-mono text-xs text-text-tertiary text-right leading-[1.375rem]"
-                    >
-                      {num}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Textarea */}
-              <div className="flex-1 relative">
-                <textarea
-                  ref={textareaRef}
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  onScroll={handleScroll}
-                  placeholder="// paste your terrible code here..."
-                  className="w-full h-full bg-transparent p-4 font-mono text-xs lg:text-sm text-foreground placeholder:text-text-tertiary focus:outline-none resize-none"
-                  spellCheck={false}
-                  style={{ tabSize: 2 }}
-                />
-              </div>
-            </div>
-          </div>
+        <div className="w-full w-full max-w-[780px] flex flex-col items-center">
+          <InteractiveCodeEditor
+            value={code}
+            onChange={setCode}
+            language="javascript"
+            className="w-full"
+          />
         </div>
 
         {/* Actions Bar */}
-        <div className="w-full max-w-[780px] mx-auto flex items-center justify-between gap-4">
+        <div className="w-full max-w-[780px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Toggle pressed={roastMode} onPressedChange={setRoastMode} />
             <span className="text-text-tertiary font-mono text-xs">
@@ -156,8 +110,8 @@ export default function HomePage() {
         </div>
 
         {/* Leaderboard Preview */}
-        <div className="w-full max-w-[960px] mx-auto space-y-6 pt-4">
-          <div className="flex items-center justify-between">
+        <div className="w-full max-w-[780px] flex flex-col items-center space-y-8 pt-8 lg:pt-12">
+          <div className="flex w-full items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <span className="text-accent-green font-mono text-xs lg:text-sm font-bold">
                 {"//"}
@@ -174,7 +128,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="rounded-[radius-md] border border-border-primary overflow-hidden">
+          <div className="w-full rounded-[radius-md] border border-border-primary overflow-hidden">
             {leaderboardPreview.map((entry) => (
               <LeaderboardRow key={entry.rank} rank={entry.rank}>
                 <LeaderboardRowScore
