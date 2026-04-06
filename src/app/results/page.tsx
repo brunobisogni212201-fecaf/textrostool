@@ -78,7 +78,7 @@ export default function ResultsPage() {
         <div className="text-center w-full flex flex-col items-center space-y-4 md:space-y-6 max-w-3xl">
           <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
-            roast_concluido
+            analise_concluida
           </h1>
           <p className="text-text-secondary w-full px-4 font-mono text-sm max-w-2xl text-center pb-2">
             {result.summary}
@@ -93,7 +93,7 @@ export default function ResultsPage() {
                 </span>
               </div>
               <div className="text-text-primary font-mono text-sm md:text-base font-medium mb-3">
-                nota_da_avaliacao
+                nota_do_codigo
               </div>
               <div className="mt-1 p-3 bg-bg-surface rounded-lg border border-border-primary flex flex-col gap-1 text-[11px] md:text-xs font-mono text-text-tertiary">
                 <div>
@@ -220,11 +220,11 @@ export default function ResultsPage() {
         <div className="flex flex-col sm:flex-row justify-center w-full gap-3 sm:gap-4">
           <Link href="/roast">
             <Button variant="secondary" className="w-full sm:w-auto">
-              $ detonar_outro_codigo
+              $ analisar_novo_codigo
             </Button>
           </Link>
           <Button variant="outline" className="w-full sm:w-auto">
-            $ compartilhar_roast
+            $ compartilhar_resultado
           </Button>
         </div>
       </PageContainer>

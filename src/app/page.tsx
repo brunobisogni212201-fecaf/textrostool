@@ -60,12 +60,12 @@ export default function HomePage() {
               $
             </span>
             <h1 className="font-mono text-3xl lg:text-5xl font-bold text-foreground">
-              cole seu código. seja julgado.
+              Analise seu código com IA
             </h1>
           </div>
           <p className="text-text-secondary font-mono text-sm lg:text-base">
-            {"//"} solte seu código abaixo e nós vamos avaliá-lo — sinceridade brutal
-            ou modo humilhação total
+            {"//"} Cole seu código abaixo para receber dicas de otimização, boas práticas
+            e melhorias de segurança de forma rápida e precisa.
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             <Toggle pressed={roastMode} onPressedChange={setRoastMode} />
             <span className="text-text-tertiary font-mono text-xs">
-              {"//"} sarcasmo máximo ativado
+              {"//"} avaliação rigorosa ativada
             </span>
           </div>
           <Button
@@ -94,18 +94,18 @@ export default function HomePage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "preparando..." : "$ detone_meu_codigo"}
+            {isSubmitting ? "preparando..." : "$ analisar_codigo"}
           </Button>
         </div>
 
         {/* Footer Stats */}
         <div className="flex items-center justify-center gap-6">
           <span className="text-text-tertiary font-mono text-xs">
-            2.847 códigos julgados
+            2.847 códigos otimizados
           </span>
           <span className="text-text-tertiary font-mono text-xs">·</span>
           <span className="text-text-tertiary font-mono text-xs">
-            nota média: 4.2/10
+            pontuação média: 7.2/10
           </span>
         </div>
 
@@ -117,7 +117,7 @@ export default function HomePage() {
                 {"//"}
               </span>
               <span className="text-text-primary font-mono text-xs lg:text-sm font-bold">
-                mural_da_vergonha
+                ranking_da_comunidade
               </span>
             </div>
             <Link

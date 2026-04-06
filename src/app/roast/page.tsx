@@ -114,10 +114,10 @@ export default function RoastPage() {
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl lg:text-5xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
-            detone_meu_codigo
+            analisar_codigo
           </h1>
           <p className="text-text-secondary font-mono text-sm">
-            cole seu código abaixo e prepare-se para ser julgado
+            Cole seu código para iniciar uma revisão completa e receber sugestões
           </p>
         </div>
 
@@ -175,7 +175,7 @@ export default function RoastPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-text-secondary font-mono text-sm">
-                modo detonação
+                avaliação rigorosa
               </span>
               <Toggle pressed={roastMode} onPressedChange={setRoastMode} />
             </div>
@@ -217,7 +217,7 @@ export default function RoastPage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "preparando sua avaliação..." : "$ detone_meu_codigo"}
+            {isSubmitting ? "processando análise..." : "$ analisar_codigo"}
           </Button>
         </div>
       </PageContainer>

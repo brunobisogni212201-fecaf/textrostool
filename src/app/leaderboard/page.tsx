@@ -86,10 +86,10 @@ export default function LeaderboardPage() {
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
-            mural_da_vergonha
+            ranking_global
           </h1>
           <p className="text-text-secondary font-mono text-xs md:text-sm">
-            os piores códigos ficam no topo
+            acompanhe as notas da comunidade
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export default function LeaderboardPage() {
                 {"//"}
               </span>
               <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
-                top_humilhacoes
+                ultimas_analises
               </span>
             </div>
 
@@ -147,7 +147,7 @@ export default function LeaderboardPage() {
 
           <div className="flex justify-center">
             <Link href="/roast">
-              <Button className="w-full sm:w-auto">$ ser_humilhado_tambem</Button>
+              <Button className="w-full sm:w-auto">$ analisar_meu_codigo</Button>
             </Link>
           </div>
         </div>
