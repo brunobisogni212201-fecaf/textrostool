@@ -114,7 +114,7 @@ export default function RoastPage() {
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl lg:text-5xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
-            analisar_codigo
+            analisar código
           </h1>
           <p className="text-text-secondary font-mono text-sm">
             Cole seu código para iniciar uma revisão completa e receber sugestões
@@ -217,7 +217,7 @@ export default function RoastPage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "processando análise..." : "$ analisar_codigo"}
+            {isSubmitting ? "processando análise..." : "$ analisar código"}
           </Button>
         </div>
       </PageContainer>

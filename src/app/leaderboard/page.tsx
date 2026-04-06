@@ -86,7 +86,7 @@ export default function LeaderboardPage() {
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
-            ranking_global
+            ranking global
           </h1>
           <p className="text-text-secondary font-mono text-xs md:text-sm">
             acompanhe as notas da comunidade
@@ -100,7 +100,7 @@ export default function LeaderboardPage() {
                 <ScoreRing score={userScore} maxScore={10} size="md" />
                 <div>
                   <div className="font-mono text-text-primary text-sm md:text-base">
-                    sua_posicao
+                    sua posição
                   </div>
                   <div className="font-mono text-xl md:text-2xl font-bold text-foreground">
                     #{userRank}
@@ -109,7 +109,7 @@ export default function LeaderboardPage() {
               </div>
               <div className="text-center sm:text-right">
                 <div className="font-mono text-text-secondary text-xs md:text-sm">
-                  sua_nota
+                  sua nota
                 </div>
                 <div className="font-mono text-xl md:text-2xl font-bold text-foreground">
                   {userScore}/10
@@ -124,7 +124,7 @@ export default function LeaderboardPage() {
                 {"//"}
               </span>
               <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
-                ultimas_analises
+                últimas análises
               </span>
             </div>
 
@@ -147,7 +147,7 @@ export default function LeaderboardPage() {
 
           <div className="flex justify-center">
             <Link href="/roast">
-              <Button className="w-full sm:w-auto">$ analisar_meu_codigo</Button>
+              <Button className="w-full sm:w-auto">$ analisar meu código</Button>
             </Link>
           </div>
         </div>

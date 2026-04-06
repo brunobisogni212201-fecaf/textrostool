@@ -94,7 +94,7 @@ export default function HomePage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "preparando..." : "$ analisar_codigo"}
+            {isSubmitting ? "preparando..." : "$ analisar código"}
           </Button>
         </div>
 
@@ -117,14 +117,14 @@ export default function HomePage() {
                 {"//"}
               </span>
               <span className="text-text-primary font-mono text-xs lg:text-sm font-bold">
-                ranking_da_comunidade
+                ranking da comunidade
               </span>
             </div>
             <Link
               href="/leaderboard"
               className="text-text-secondary hover:text-text-primary font-mono text-xs lg:text-sm transition-colors"
             >
-              ver_todos &rarr;
+              ver todos &rarr;
             </Link>
           </div>
 
