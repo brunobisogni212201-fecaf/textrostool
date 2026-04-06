@@ -60,12 +60,12 @@ export default function HomePage() {
               $
             </span>
             <h1 className="font-mono text-3xl lg:text-5xl font-bold text-foreground">
-              paste your code. get roasted.
+              cole seu código. seja julgado.
             </h1>
           </div>
           <p className="text-text-secondary font-mono text-sm lg:text-base">
-            {"//"} drop your code below and we&apos;ll rate it — brutally honest
-            or full roast mode
+            {"//"} solte seu código abaixo e nós vamos avaliá-lo — sinceridade brutal
+            ou modo humilhação total
           </p>
         </div>
 
@@ -84,7 +84,7 @@ export default function HomePage() {
           <div className="flex items-center gap-4">
             <Toggle pressed={roastMode} onPressedChange={setRoastMode} />
             <span className="text-text-tertiary font-mono text-xs">
-              {"//"} maximum sarcasm enabled
+              {"//"} sarcasmo máximo ativado
             </span>
           </div>
           <Button
@@ -94,18 +94,18 @@ export default function HomePage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "preparing..." : "$ roast_my_code"}
+            {isSubmitting ? "preparando..." : "$ detone_meu_codigo"}
           </Button>
         </div>
 
         {/* Footer Stats */}
         <div className="flex items-center justify-center gap-6">
           <span className="text-text-tertiary font-mono text-xs">
-            2,847 codes roasted
+            2.847 códigos julgados
           </span>
           <span className="text-text-tertiary font-mono text-xs">·</span>
           <span className="text-text-tertiary font-mono text-xs">
-            avg score: 4.2/10
+            nota média: 4.2/10
           </span>
         </div>
 
@@ -117,14 +117,14 @@ export default function HomePage() {
                 {"//"}
               </span>
               <span className="text-text-primary font-mono text-xs lg:text-sm font-bold">
-                shame_leaderboard
+                mural_da_vergonha
               </span>
             </div>
             <Link
               href="/leaderboard"
               className="text-text-secondary hover:text-text-primary font-mono text-xs lg:text-sm transition-colors"
             >
-              view_all &rarr;
+              ver_todos &rarr;
             </Link>
           </div>
 

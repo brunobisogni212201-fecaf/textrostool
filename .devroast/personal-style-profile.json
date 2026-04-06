@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "sessions": 0,
+  "lastUpdatedAt": "2026-04-06T17:23:34.658Z",
+  "daysActive": [],
+  "signals": {
+    "semicolonRate": 0.5,
+    "singleQuoteRate": 0.5,
+    "typescriptRate": 0.5,
+    "functionalRate": 0.5,
+    "asyncAwaitRate": 0.5
+  },
+  "preferredLanguages": {},
+  "favoritePatterns": []
+}

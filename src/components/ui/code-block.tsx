@@ -1,4 +1,4 @@
-import { codeToHtml } from "shiki";
+import { highlightCodeRsc } from "@/lib/highlight/rsc-highlighter";
 
 export type CodeBlockProps = {
   code: string;
@@ -11,10 +11,7 @@ export async function CodeBlock({
   language = "javascript",
   className,
 }: CodeBlockProps) {
-  const html = await codeToHtml(code, {
-    lang: language,
-    theme: "vesper",
-  });
+  const html = await highlightCodeRsc(code, language);
 
   return (
     <div

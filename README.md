@@ -19,6 +19,21 @@ npm run dev
 
 Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
+## Gemini API (Roast Real)
+
+Crie um arquivo `.env.local` com:
+
+```bash
+GEMINI_API_KEY=seu_token_gemini
+# opcional (default: gemini-2.5-flash)
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+O roast via IA usa:
+- rota `POST /api/roast`
+- controle de orçamento por modo (`cheap`, `balanced`, `deep`)
+- estimativa de tokens de entrada e limite de saída
+
 ## Tecnologias
 
 - Next.js 16.1.6, TypeScript, Tailwind CSS v4, Biome, Shiki

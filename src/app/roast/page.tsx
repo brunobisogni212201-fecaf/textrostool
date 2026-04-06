@@ -14,26 +14,65 @@ import {
   type PopularStackLanguageMode,
   resolvePopularStackLanguage,
 } from "@/lib/highlight/web-stack-language";
+import {
+  getLearnedHints,
+  updateLearningFromResult,
+} from "@/lib/roast/client-memory";
+import type { RoastBudgetMode, RoastResult } from "@/lib/roast/types";
 
 export default function RoastPage() {
   const router = useRouter();
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState<PopularStackLanguageMode>("auto");
   const [cloud, setCloud] = useState<CloudProvider>("azure");
+  const [budgetMode, setBudgetMode] = useState<RoastBudgetMode>("cheap");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [roastMode, setRoastMode] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!code.trim()) return;
 
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    router.push("/results");
+    try {
+      setError(null);
+      setIsSubmitting(true);
+
+      const response = await fetch("/api/roast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code,
+          language: resolvedLanguage,
+          roastMode,
+          budgetMode,
+          learnedHints: getLearnedHints(),
+        }),
+      });
+
+      const data = (await response.json()) as RoastResult & { error?: string };
+      if (!response.ok || data.error) {
+        throw new Error(data.error || "Failed to generate roast.");
+      }
+
+      sessionStorage.setItem(
+        "devroast.latest",
+        JSON.stringify({
+          code,
+          language: resolvedLanguage,
+          result: data,
+        }),
+      );
+      updateLearningFromResult(data);
+      router.push("/results");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unexpected error.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const languages = [
-    { value: "auto", label: "Auto (Popular Stack)" },
+    { value: "auto", label: "Auto (Stack Popular)" },
     { value: "javascript", label: "JavaScript" },
     { value: "typescript", label: "TypeScript" },
     { value: "jsx", label: "JSX" },
@@ -75,18 +114,18 @@ export default function RoastPage() {
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
           <h1 className="text-3xl lg:text-5xl font-bold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
-            roast_my_code
+            detone_meu_codigo
           </h1>
           <p className="text-text-secondary font-mono text-sm">
-            paste your code below and prepare to be roasted
+            cole seu código abaixo e prepare-se para ser julgado
           </p>
         </div>
 
-        <div className="w-full max-w-[780px] flex flex-col items-center space-y-6 md:space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full px-2 gap-4">
+        <div className="w-full max-w-[840px] flex flex-col items-center space-y-6 md:space-y-8">
+          <div className="flex flex-wrap items-center justify-center sm:justify-between w-full px-2 gap-x-6 gap-y-4">
             <div className="flex items-center gap-2">
               <span className="text-text-secondary font-mono text-sm">
-                language:
+                linguagem:
               </span>
               <select
                 value={language}
@@ -104,7 +143,7 @@ export default function RoastPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-text-secondary font-mono text-sm">
-                cloud:
+                nuvem:
               </span>
               <select
                 value={cloud}
@@ -120,7 +159,23 @@ export default function RoastPage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-text-secondary font-mono text-sm">
-                roast mode
+                orçamento:
+              </span>
+              <select
+                value={budgetMode}
+                onChange={(e) =>
+                  setBudgetMode(e.target.value as RoastBudgetMode)
+                }
+                className="bg-bg-input border border-border-primary rounded-[radius-md] px-3 py-1.5 text-sm font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="cheap">baixo</option>
+                <option value="balanced">balanceado</option>
+                <option value="deep">profundo</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-text-secondary font-mono text-sm">
+                modo detonação
               </span>
               <Toggle pressed={roastMode} onPressedChange={setRoastMode} />
             </div>
@@ -134,13 +189,13 @@ export default function RoastPage() {
               className="w-full"
             />
             <div className="absolute bottom-3 right-3 text-text-tertiary font-mono text-xs z-30 pointer-events-none">
-              {code.length} chars
+              {code.length} caracteres
             </div>
           </div>
 
           <div className="w-full rounded-[radius-md] border border-border-primary bg-bg-surface overflow-hidden">
             <div className="px-4 py-3 border-b border-border-primary flex flex-wrap gap-3 items-center text-xs font-mono">
-              <span className="text-text-secondary">implementation lines:</span>
+              <span className="text-text-secondary">linhas de implementação:</span>
               <span className="text-accent-green">{resolvedLanguage}</span>
               <span className="text-text-tertiary">via {cloud}</span>
             </div>
@@ -148,16 +203,21 @@ export default function RoastPage() {
               <code>{implementationLines.join("\n")}</code>
             </pre>
           </div>
+          {error ? (
+            <div className="w-full rounded-[radius-md] border border-red-accent/50 bg-red-accent/10 px-4 py-3 text-xs font-mono text-red-accent">
+              {error}
+            </div>
+          ) : null}
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center w-full py-4">
           <Button
             size="lg"
             className="w-full sm:w-auto"
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "preparing your roast..." : "$ roast_my_code"}
+            {isSubmitting ? "preparando sua avaliação..." : "$ detone_meu_codigo"}
           </Button>
         </div>
       </PageContainer>

@@ -27,7 +27,7 @@ export function InteractiveCodeEditor({
   value,
   onChange,
   language = "auto",
-  placeholder = "// paste your terrible code here...",
+  placeholder = "// cole seu código horrível aqui...",
   className = "",
 }: InteractiveCodeEditorProps) {
   const [html, setHtml] = useState("");

@@ -6,20 +6,25 @@ import { tv, type VariantProps } from "tailwind-variants";
 const toggleTrack = tv(
   {
     base: [
-      "relative inline-flex shrink-0 cursor-pointer rounded-full",
+      "relative inline-flex shrink-0 cursor-pointer rounded-full items-center",
       "transition-colors duration-200 ease-in-out",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-green focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
     variants: {
       size: {
-        sm: "h-5 w-9 p-[3px]",
-        md: "h-6 w-11 p-[3px]",
-        lg: "h-7 w-13 p-[4px]",
+        sm: "h-5 w-9 px-0.5",
+        md: "h-6 w-11 px-[3px]",
+        lg: "h-7 w-14 px-1",
+      },
+      state: {
+        on: "bg-accent-green",
+        off: "bg-bg-input border border-border-primary",
       },
     },
     defaultVariants: {
       size: "md",
+      state: "off",
     },
   },
   {
@@ -30,14 +35,14 @@ const toggleTrack = tv(
 const toggleKnob = tv(
   {
     base: [
-      "rounded-full bg-white shadow-md",
+      "rounded-full bg-white shadow-sm ring-0 block",
       "transform transition-transform duration-200 ease-in-out",
     ],
     variants: {
       size: {
-        sm: "h-3.5 w-3.5",
-        md: "h-4.5 w-4.5",
-        lg: "h-5 w-5",
+        sm: "h-4 w-4 data-[state=on]:translate-x-[16px] data-[state=off]:translate-x-0",
+        md: "h-4.5 w-4.5 data-[state=on]:translate-x-[20px] data-[state=off]:translate-x-0",
+        lg: "h-5 w-5 data-[state=on]:translate-x-[28px] data-[state=off]:translate-x-0",
       },
     },
     defaultVariants: {
@@ -75,21 +80,24 @@ function Toggle({
       onPressedChange={onPressedChange}
       disabled={disabled}
       render={(toggleProps, state) => {
-        const trackClasses = toggleTrack({ size });
-        const knobClasses = toggleKnob({ size });
         const isPressed = state.pressed;
+        const trackClasses = toggleTrack({ size, state: isPressed ? "on" : "off" });
+        const knobClasses = toggleKnob({ size });
 
         return (
           <button
             type="button"
             {...toggleProps}
-            className={`inline-flex items-center gap-3 cursor-pointer ${className || ""}`}
+            aria-checked={isPressed}
+            className={`inline-flex items-center gap-3 cursor-pointer focus-visible:outline-none rounded-full ${className || ""}`}
           >
             <span
-              className={`${trackClasses} ${isPressed ? "bg-green-primary" : "bg-border-primary"}`}
+              className={trackClasses}
+              data-state={isPressed ? "on" : "off"}
             >
               <span
-                className={`${knobClasses} ${isPressed ? "translate-x-[18px]" : "translate-x-0"}`}
+                className={knobClasses}
+                data-state={isPressed ? "on" : "off"}
               />
             </span>
           </button>

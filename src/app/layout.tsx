@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/app/components/layout";
 import "./globals.css";
 
@@ -8,14 +8,14 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 });
 
-const geist = Geist({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
-  title: "devroast - paste your code, get roasted",
-  description: "A code review tool that roasts your code",
+  title: "devroast - cole seu código, seja julgado",
+  description: "Uma ferramenta de code review que detona seu código",
 };
 
 export default function RootLayout({
@@ -24,15 +24,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
-        className={`${jetbrainsMono.variable} ${geist.variable} min-h-screen`}
+        className={`${jetbrainsMono.variable} ${inter.variable} font-sans min-h-screen text-foreground bg-background antialiased`}
       >
         <Navbar
           logoText="devroast"
           links={[
-            { href: "/roast", label: "roast" },
-            { href: "/leaderboard", label: "leaderboard" },
+            { href: "/roast", label: "detonar" },
+            { href: "/leaderboard", label: "ranking" },
           ]}
         />
         {children}

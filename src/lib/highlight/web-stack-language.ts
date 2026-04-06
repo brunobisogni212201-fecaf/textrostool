@@ -274,7 +274,9 @@ export function resolvePopularStackLanguage(
   return mode;
 }
 
-export function toShikiLanguage(language: PopularStackLanguage): string {
+export function toShikiLanguage(
+  language: PopularStackLanguage | string,
+): string {
   if (language === "rails") return "ruby";
   if (language === "nosql") return "json";
   if (language === "shell") return "bash";

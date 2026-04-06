@@ -1,35 +1,20 @@
-# Especificação de Persistência — Drizzle + Postgres
+# Spec Completo: Docker Compose + Drizzle Kit + Schema
 
-Esta especificação descreve como introduzir o Drizzle ORM no DevRoast para armazenar submissões de código, análises e dados de ranking. Foi elaborada com base no layout atual (páginas de envio/roast, resultados e leaderboard) e nas funcionalidades descritas no `README.md` (envio de código em múltiplas linguagens, modo roast, pontuação 0-10, ranking e destaque de sintaxe).
+Este documento cobre o setup completo de persistência para o DevRoast com Postgres + Drizzle:
+- Infra local com Docker Compose
+- Configuração do Drizzle Kit
+- Fluxo de migrações (`generate`, `migrate`, `push`, `studio`)
+- Schema completo das tabelas
+- Estrutura de arquivos e comandos operacionais
 
-## Objetivos
-
-1. Disponibilizar uma instância Postgres local via Docker Compose para desenvolvimento.
-2. Modelar o domínio do DevRoast em tabelas SQL normalizadas, respeitando os fluxos da UI existente.
-3. Configurar o Drizzle (ORM + CLI) para geração/aplicação de migrações e acesso aos dados em rotas/ações server-side do Next.js.
-4. Permitir consultas eficientes para:
-   - listar submissões recentes e seus resultados;
-   - recuperar detalhes completos de uma análise (para a tela de resultados);
-   - construir o ranking (leaderboard) ordenado do pior para o “menos ruim”.
-
-## Dependências e Estrutura de Projeto
-
-Adicionar os pacotes:
+## 1. Dependências
 
 ```bash
-npm install drizzle-orm drizzle-kit pg pg-connection-string zod
+npm install drizzle-orm pg pg-connection-string zod
+npm install -D drizzle-kit
 ```
 
-Novos arquivos/pastas:
-
-- `drizzle.config.ts` — apontando para `./drizzle` (pasta das migrações) e `./src/lib/db/schema`.
-- `drizzle/` — diretório para artefatos de migração gerados pelo Drizzle Kit.
-- `src/lib/db/`
-  - `client.ts` — cria pool do `pg` e exporta `db` via `drizzle(pool)`.
-  - `schema/` — arquivos com tabelas/enums Drizzle.
-  - `queries/` — consultas reutilizáveis (ex.: leaderboard, submissões recentes).
-
-## Docker Compose (Postgres)
+## 2. Docker Compose (Postgres local)
 
 Criar `docker-compose.yml` na raiz:
 
@@ -46,161 +31,397 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - devroast_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devroast -d devroast"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
-  postgres_data:
+  devroast_pg_data:
 ```
 
-Variável `.env.local`:
+Comandos:
 
+```bash
+docker compose up -d
+docker compose ps
+docker compose logs -f postgres
+docker compose down
 ```
+
+## 3. Variáveis de ambiente
+
+No `.env.local`:
+
+```bash
 DATABASE_URL=postgresql://devroast:devroast@localhost:5432/devroast
 ```
 
-## Modelagem de Dados
+No `.env.local.example` (recomendado):
 
-### Enums (Drizzle `pgEnum`)
+```bash
+DATABASE_URL=postgresql://devroast:devroast@localhost:5432/devroast
+```
 
-| Enum | Valores | Uso |
-| --- | --- | --- |
-| `language` | `javascript`, `typescript`, `python`, `rust`, `go`, `java`, `cpp`, `csharp`, `unknown` | Linguagem selecionada ou detectada na submissão. |
-| `analysis_status` | `pending`, `processing`, `completed`, `failed` | Estado do pipeline de análise. |
-| `severity` | `critical`, `warning`, `good`, `info` | Severidade das findings individuais. |
-| `consultation_type` | `online`, `presencial` | Preparado para futuros módulos (ex.: agenda) caso sincronizemos com dados clínicos. |
+## 4. Drizzle Kit config
 
-> Observação: apesar do app atual não exigir informações de agenda no backend, o enum `consultation_type` prepara terreno para persistir sessões futuras se necessário. Excluir se não fizer sentido neste escopo.
+Criar `drizzle.config.ts`:
 
-### Tabelas
+```ts
+import "dotenv/config";
+import { defineConfig } from "drizzle-kit";
 
-#### 1. `users`
+export default defineConfig({
+  out: "./drizzle",
+  schema: "./src/lib/db/schema/index.ts",
+  dialect: "postgresql",
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+  strict: true,
+  verbose: true,
+});
+```
 
-| Coluna | Tipo | Notas |
-| --- | --- | --- |
-| `id` | `uuid` PK default `gen_random_uuid()` | Usuário autenticado (futuro); nulo em submissões anônimas. |
-| `email` | `text` único, nullable | Guarda se a pessoa identificar-se. |
-| `display_name` | `text` | Nome mostrado no leaderboard se permitido. |
-| `created_at` | `timestamp` default `now()` | Registro de criação. |
+## 5. Scripts npm (migrations, push, studio)
 
-> Opcional: se não houver autenticação prevista, deixar tabela pronta mas permitir `user_id` nullable em `submissions`.
+Adicionar em `package.json`:
 
-#### 2. `submissions`
+```json
+{
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:check": "drizzle-kit check"
+  }
+}
+```
 
-| Coluna | Tipo | Notas |
-| --- | --- | --- |
-| `id` | `uuid` PK | Identificador da submissão. |
-| `user_id` | `uuid` FK `users.id` nullable | Submissões anônimas deixam `NULL`. |
-| `code` | `text` | Código original enviado (até ~64k). |
-| `language` | `language` enum | Linguagem detectada/selecionada. |
-| `roast_mode` | `boolean` default `true` | Se usuário ativou modo roast. |
-| `status` | `analysis_status` enum default `pending` | Estado atual da análise. |
-| `submitted_at` | `timestamp` default `now()` | Data/hora da submissão. |
-| `processed_at` | `timestamp` nullable | Fim da análise. |
+Quando usar cada um:
+- `db:generate`: gera SQL de migração a partir do schema TypeScript.
+- `db:migrate`: aplica migrações versionadas da pasta `drizzle/`.
+- `db:push`: sincroniza schema direto no banco (útil para protótipo/dev, evitar em produção).
+- `db:studio`: UI para navegar/editar dados.
+- `db:check`: valida drift entre schema e banco.
 
-#### 3. `analysis_results`
+## 6. Estrutura de arquivos recomendada
 
-| Coluna | Tipo | Notas |
-| --- | --- | --- |
-| `id` | `uuid` PK | |
-| `submission_id` | `uuid` FK `submissions.id` único | Relacionamento 1:1. |
-| `score` | `numeric(3,1)` | Escala 0-10 exibida na UI. |
-| `total_issues` | `integer` | Total curto para resumo. |
-| `critical_count` | `integer` | |
-| `warning_count` | `integer` | |
-| `good_count` | `integer` | |
-| `language_override` | `language` enum nullable | Caso o analista/manual altere. |
-| `summary` | `text` | Texto livre exibido como “roast completo”. |
+```text
+drizzle/
+drizzle.config.ts
+src/lib/db/
+  client.ts
+  schema/
+    enums.ts
+    users.ts
+    submissions.ts
+    analysis.ts
+    leaderboard.ts
+    style-agent.ts
+    index.ts
+  queries/
+    submissions.ts
+    analysis.ts
+    leaderboard.ts
+```
 
-#### 4. `analysis_findings`
+## 7. Schema completo (Drizzle)
 
-| Coluna | Tipo | Notas |
-| --- | --- | --- |
-| `id` | `uuid` PK |
-| `analysis_id` | `uuid` FK `analysis_results.id` |
-| `severity` | `severity` enum |
-| `title` | `text` |
-| `description` | `text` |
-| `line_start` | `integer` nullable | Ajuda para highlight futuro. |
-| `line_end` | `integer` nullable | |
+### 7.1 `src/lib/db/schema/enums.ts`
 
-#### 5. `leaderboard_entries`
+```ts
+import { pgEnum } from "drizzle-orm/pg-core";
 
-| Coluna | Tipo | Notas |
-| --- | --- | --- |
-| `id` | `uuid` PK |
-| `submission_id` | `uuid` FK `submissions.id` | Vínculo para dados completos. |
-| `score` | `numeric(3,1)` | Repetimos para indexação. |
-| `language` | `language` enum |
-| `author_alias` | `text` nullable | Ex.: “js_ninja”. |
-| `created_at` | `timestamp` default `now()` |
+export const languageEnum = pgEnum("language", [
+  "javascript",
+  "typescript",
+  "jsx",
+  "tsx",
+  "html",
+  "css",
+  "json",
+  "python",
+  "go",
+  "java",
+  "ruby",
+  "rails",
+  "sql",
+  "nosql",
+  "shell",
+  "react-native",
+  "flutter",
+  "swift",
+  "unknown",
+]);
 
-#### 6. (Opcional) `session_events`
+export const analysisStatusEnum = pgEnum("analysis_status", [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+]);
 
-Registra atividades da interface para telemetria futura (não obrigatório agora). Manter em backlog.
+export const severityEnum = pgEnum("severity", ["critical", "warning", "good"]);
 
-### Relacionamentos
+export const budgetModeEnum = pgEnum("budget_mode", ["cheap", "balanced", "deep"]);
+```
 
-- `users (1) ── (n) submissions`
-- `submissions (1) ── (1) analysis_results`
-- `analysis_results (1) ── (n) analysis_findings`
-- `submissions (1) ── (0|1) leaderboard_entries`
+### 7.2 `src/lib/db/schema/users.ts`
 
-Indices recomendados:
+```ts
+import { sql } from "drizzle-orm";
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-- `submissions_language_idx` em (`language`).
-- `analysis_results_score_idx` em (`score DESC`).
-- `leaderboard_entries_score_idx` em (`score ASC`).
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").unique(),
+  displayName: text("display_name"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+```
 
-## Fluxos e Consultas
+### 7.3 `src/lib/db/schema/submissions.ts`
 
-1. **Criar submissão** — inserir em `submissions` (status `pending`).
-2. **Atualizar análise** — após processamento, inserir em `analysis_results`, findings e atualizar `submissions.status = 'completed'`, `processed_at = now()`.
-3. **Leaderboard** — `SELECT * FROM leaderboard_entries ORDER BY score ASC LIMIT 50;` exibindo alias e linguagem.
-4. **Histórico do usuário** — `SELECT s.id, s.language, ar.score FROM submissions s LEFT JOIN analysis_results ar ON ar.submission_id = s.id WHERE s.user_id = $1 ORDER BY s.submitted_at DESC;`
+```ts
+import { sql } from "drizzle-orm";
+import {
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  boolean,
+} from "drizzle-orm/pg-core";
+import { analysisStatusEnum, languageEnum } from "./enums";
+import { users } from "./users";
 
-## Passo a Passo (TODOs)
+export const submissions = pgTable(
+  "submissions",
+  {
+    id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+    userId: uuid("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    code: text("code").notNull(),
+    language: languageEnum("language").notNull().default("unknown"),
+    roastMode: boolean("roast_mode").notNull().default(true),
+    status: analysisStatusEnum("status").notNull().default("pending"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    processedAt: timestamp("processed_at", { withTimezone: true }),
+  },
+  (table) => ({
+    languageIdx: index("submissions_language_idx").on(table.language),
+    statusIdx: index("submissions_status_idx").on(table.status),
+    submittedAtIdx: index("submissions_submitted_at_idx").on(table.submittedAt),
+  }),
+);
+```
 
-1. **Infra**
-   - [ ] Adicionar `docker-compose.yml` (Postgres) e atualizar `README` com instruções para `docker compose up -d`.
-   - [ ] Declarar `DATABASE_URL` em `.env.local.example`.
+### 7.4 `src/lib/db/schema/analysis.ts`
 
-2. **Configuração Drizzle**
-   - [ ] Criar `drizzle.config.ts` com:
-     ```ts
-     import { defineConfig } from "drizzle-kit";
-     export default defineConfig({
-       schema: "./src/lib/db/schema/index.ts",
-       out: "./drizzle",
-       dialect: "postgresql",
-       dbCredentials: { url: process.env.DATABASE_URL! },
-     });
-     ```
-   - [ ] Adicionar scripts no `package.json`: `"db:generate": "drizzle-kit generate"`, `"db:migrate": "drizzle-kit migrate"`.
+```ts
+import { sql } from "drizzle-orm";
+import {
+  index,
+  integer,
+  numeric,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
+import { budgetModeEnum, languageEnum, severityEnum } from "./enums";
+import { submissions } from "./submissions";
 
-3. **Schema + Migrações**
-   - [ ] Implementar enums e tabelas descritas acima em `schema/*.ts` (sugerir arquivos: `enums.ts`, `users.ts`, `submissions.ts`, `analysis.ts`, `leaderboard.ts`).
-   - [ ] Exportar tudo por `schema/index.ts`.
-   - [ ] Rodar `npm run db:generate` e revisar SQL gerado.
-   - [ ] Aplicar com `npm run db:migrate`.
+export const analysisResults = pgTable(
+  "analysis_results",
+  {
+    id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+    submissionId: uuid("submission_id")
+      .notNull()
+      .references(() => submissions.id, { onDelete: "cascade" }),
+    score: numeric("score", { precision: 3, scale: 1 }).notNull(),
+    totalIssues: integer("total_issues").notNull().default(0),
+    criticalCount: integer("critical_count").notNull().default(0),
+    warningCount: integer("warning_count").notNull().default(0),
+    goodCount: integer("good_count").notNull().default(0),
+    languageOverride: languageEnum("language_override"),
+    summary: text("summary").notNull(),
+    model: text("model").notNull(),
+    budgetMode: budgetModeEnum("budget_mode").notNull().default("cheap"),
+    inputTokensEstimate: integer("input_tokens_estimate").notNull().default(0),
+    outputTokensLimit: integer("output_tokens_limit").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    submissionUnique: uniqueIndex("analysis_results_submission_id_uidx").on(
+      table.submissionId,
+    ),
+    scoreIdx: index("analysis_results_score_idx").on(table.score),
+  }),
+);
 
-4. **Client e Queries**
-   - [ ] Criar `src/lib/db/client.ts` com `pg.Pool` respeitando `NODE_ENV` (evitar múltiplos pools em dev). Exportar `db` e `schema`.
-   - [ ] Escrever helpers em `src/lib/db/queries`: `createSubmission`, `completeAnalysis`, `listLeaderboard`, `getAnalysisDetail`.
-   - [ ] Atualizar ações server-side / API routes para usar os helpers.
+export const analysisFindings = pgTable(
+  "analysis_findings",
+  {
+    id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+    analysisId: uuid("analysis_id")
+      .notNull()
+      .references(() => analysisResults.id, { onDelete: "cascade" }),
+    severity: severityEnum("severity").notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    lineStart: integer("line_start"),
+    lineEnd: integer("line_end"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    analysisIdIdx: index("analysis_findings_analysis_id_idx").on(table.analysisId),
+    severityIdx: index("analysis_findings_severity_idx").on(table.severity),
+  }),
+);
+```
 
-5. **Integração UI**
-   - [ ] Ajustar páginas `/results` e `/leaderboard` para consumir os dados reais.
-   - [ ] Garantir que `language` seja enviado pelos novos componentes de editor (quando prontos) para armazenar no banco.
+### 7.5 `src/lib/db/schema/leaderboard.ts`
 
-6. **Observabilidade / Futuro**
-   - [ ] (Opcional) adicionar seeds base usando script `drizzle-kit push --config` ou seeds customizados.
-   - [ ] Planejar replicação para produção (RDS, etc.).
+```ts
+import { sql } from "drizzle-orm";
+import { index, numeric, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { languageEnum } from "./enums";
+import { submissions } from "./submissions";
 
-## Entregáveis
+export const leaderboardEntries = pgTable(
+  "leaderboard_entries",
+  {
+    id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+    submissionId: uuid("submission_id")
+      .notNull()
+      .references(() => submissions.id, { onDelete: "cascade" }),
+    score: numeric("score", { precision: 3, scale: 1 }).notNull(),
+    language: languageEnum("language").notNull(),
+    authorAlias: text("author_alias"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    scoreIdx: index("leaderboard_entries_score_idx").on(table.score),
+    createdAtIdx: index("leaderboard_entries_created_at_idx").on(table.createdAt),
+  }),
+);
+```
 
-- Docker Compose funcional (`docker compose up -d` cria banco pronto).
-- Schema Drizzle com enums/tabelas descritas acima.
-- Migrações aplicáveis + scripts `db:*` no `package.json`.
-- Helpers de acesso aos dados prontos para serem usados nas rotas/ações do Next.js.
+### 7.6 `src/lib/db/schema/style-agent.ts`
 
-Com isso, o DevRoast terá uma base sólida para evoluir de protótipo estático para aplicação dinâmica com persistência garantida pelo Drizzle ORM.
+```ts
+import { sql } from "drizzle-orm";
+import { integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+
+export const personalStyleProfiles = pgTable("personal_style_profiles", {
+  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+  profileVersion: integer("profile_version").notNull().default(1),
+  sessions: integer("sessions").notNull().default(0),
+  lastUpdatedAt: timestamp("last_updated_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  signals: jsonb("signals").notNull(),
+  preferredLanguages: jsonb("preferred_languages").notNull(),
+  favoritePatterns: jsonb("favorite_patterns").notNull(),
+  source: text("source").notNull().default("local-agent"),
+});
+```
+
+### 7.7 `src/lib/db/schema/index.ts`
+
+```ts
+export * from "./analysis";
+export * from "./enums";
+export * from "./leaderboard";
+export * from "./style-agent";
+export * from "./submissions";
+export * from "./users";
+```
+
+## 8. Cliente Drizzle
+
+`src/lib/db/client.ts`:
+
+```ts
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import * as schema from "./schema";
+
+const globalForDb = globalThis as unknown as { pool?: Pool };
+
+const pool =
+  globalForDb.pool ??
+  new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 10,
+  });
+
+if (process.env.NODE_ENV !== "production") globalForDb.pool = pool;
+
+export const db = drizzle(pool, { schema });
+export { pool };
+```
+
+## 9. Fluxo operacional de migrations
+
+Primeiro setup:
+
+```bash
+docker compose up -d
+npm run db:generate
+npm run db:migrate
+npm run db:studio
+```
+
+Mudança de schema:
+
+```bash
+# editar arquivos em src/lib/db/schema/*
+npm run db:generate
+npm run db:migrate
+npm run db:check
+```
+
+Modo rápido de protótipo:
+
+```bash
+npm run db:push
+```
+
+Produção:
+- usar `generate + migrate` versionado (não usar `push` direto).
+- aplicar migração via pipeline CI/CD.
+
+## 10. Queries essenciais
+
+1. Criar submissão + status `pending`.
+2. Salvar resultado + findings + atualizar status `completed`.
+3. Consultar leaderboard por menor score.
+4. Consultar histórico por usuário e por linguagem.
+5. Consultar perfil do personal-style-agent (opcional, se migrar do JSON local para DB).
+
+## 11. Checklist de pronto
+
+- [ ] `docker compose up -d` sobe Postgres saudável
+- [ ] `db:generate` cria SQL em `drizzle/`
+- [ ] `db:migrate` aplica sem erro
+- [ ] `db:studio` abre e visualiza tabelas
+- [ ] Índices principais criados
+- [ ] Queries básicas implementadas em `src/lib/db/queries/*`

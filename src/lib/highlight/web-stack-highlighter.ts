@@ -1,4 +1,5 @@
-import { createHighlighter } from "shiki";
+import { createHighlighter, createJavaScriptRegexEngine } from "shiki";
+import { SHIKI_THEME } from "./shiki-shared";
 import {
   getPriorityPopularStackLanguages,
   type PopularStackLanguage,
@@ -7,7 +8,6 @@ import {
   toShikiLanguage,
 } from "./web-stack-language";
 
-const THEME = "vesper";
 const highlighterCache = new Map<
   string,
   Promise<Awaited<ReturnType<typeof createHighlighter>>>
@@ -34,8 +34,9 @@ async function getWebStackHighlighter(languages: string[]) {
   if (cached) return cached;
 
   const next = createHighlighter({
-    themes: [THEME],
+    themes: [SHIKI_THEME],
     langs: languages,
+    engine: createJavaScriptRegexEngine(),
   });
 
   highlighterCache.set(cacheKey, next);
@@ -61,7 +62,7 @@ export async function highlightWebStackCode({
   const highlighter = await getWebStackHighlighter(subset);
   const html = highlighter.codeToHtml(code, {
     lang: toShikiLanguage(language),
-    theme: THEME,
+    theme: SHIKI_THEME,
   });
 
   return { html, language };
