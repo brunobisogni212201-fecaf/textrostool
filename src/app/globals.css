@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=BBH+Bogle&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -67,6 +68,7 @@
 
   --font-sans: 'BBH Bogle', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-roboto: "Roboto", sans-serif;
 
   --spacing-xs: 4px;
   --spacing-sm: 8px;
