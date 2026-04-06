@@ -13,24 +13,24 @@ const button = tv(
     variants: {
       variant: {
         primary:
-          "bg-foreground text-background hover:bg-foreground/90 shadow-md",
+          "bg-foreground text-background hover:bg-foreground/90",
         secondary:
-          "bg-bg-surface border border-border-primary text-foreground hover:bg-bg-elevated hover:border-border-secondary shadow-sm",
+          "bg-bg-surface border border-border-primary text-foreground hover:bg-bg-elevated hover:border-border-focus",
         destructive:
-          "bg-red-accent/10 border border-red-accent/20 text-red-accent hover:bg-red-accent/20 shadow-sm",
+          "bg-red-accent/10 border border-red-accent/20 text-red-accent hover:bg-red-accent/20",
         success:
-          "bg-accent-green text-background hover:brightness-110 shadow-md",
+          "bg-accent-green text-background hover:brightness-110",
         outline:
-          "border border-border-primary bg-transparent text-foreground hover:bg-bg-surface shadow-sm",
+          "border border-border-primary bg-transparent text-foreground hover:bg-bg-surface",
         ghost:
           "bg-transparent text-foreground hover:bg-bg-surface active:scale-100",
         link: "bg-transparent text-foreground underline-offset-4 hover:underline active:scale-100",
       },
       size: {
-        sm: "h-9 px-4 py-2 text-xs rounded-md",
-        md: "h-11 px-6 py-2.5 text-sm rounded-md",
-        lg: "h-12 px-8 text-base rounded-md",
-        icon: "h-11 w-11 rounded-md",
+        sm: "h-7 px-3 text-xs rounded-sm",
+        md: "h-8 px-4 text-[13px] rounded",
+        lg: "h-9 px-5 text-sm rounded",
+        icon: "h-8 w-8 rounded",
       },
     },
     defaultVariants: {
