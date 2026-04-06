@@ -27,10 +27,10 @@ const button = tv(
         link: "bg-transparent text-foreground underline-offset-4 hover:underline active:scale-100",
       },
       size: {
-        sm: "h-7 px-3 text-xs rounded-sm",
-        md: "h-8 px-4 text-[13px] rounded",
-        lg: "h-9 px-5 text-sm rounded",
-        icon: "h-8 w-8 rounded",
+        sm: "h-6 px-2.5 text-[11px] rounded-sm",
+        md: "h-7 px-3 text-xs rounded-sm",
+        lg: "h-8 px-4 text-[13px] rounded-sm",
+        icon: "h-7 w-7 rounded-sm",
       },
     },
     defaultVariants: {
