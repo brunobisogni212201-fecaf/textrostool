@@ -112,7 +112,7 @@ export default function RoastPage() {
     <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
       <PageContainer className="flex flex-col items-center justify-center w-full max-w-[960px] space-y-12 lg:space-y-16 mx-auto">
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
-          <h1 className="text-3xl lg:text-5xl font-bold font-mono text-foreground">
+          <h1 className="text-3xl lg:text-5xl font-semibold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
             analisar código
           </h1>
@@ -217,7 +217,7 @@ export default function RoastPage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "processando análise..." : "$ analisar código"}
+            {isSubmitting ? "processando análise..." : "Analisar código"}
           </Button>
         </div>
       </PageContainer>

@@ -76,7 +76,7 @@ export default function ResultsPage() {
     <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
       <PageContainer className="flex flex-col w-full max-w-[780px] space-y-12 lg:space-y-16 mx-auto">
         <div className="text-center w-full flex flex-col items-center space-y-4 md:space-y-6 max-w-3xl">
-          <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
+          <h1 className="text-3xl md:text-4xl font-semibold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
             análise concluída
           </h1>
@@ -160,7 +160,7 @@ export default function ResultsPage() {
             <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
               {"//"}
             </span>
-            <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
+            <span className="text-text-primary font-mono text-xs md:text-sm font-semibold">
               seu código
             </span>
           </div>
@@ -174,7 +174,7 @@ export default function ResultsPage() {
             <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
               {"//"}
             </span>
-            <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
+            <span className="text-text-primary font-mono text-xs md:text-sm font-semibold">
               problemas encontrados
             </span>
           </div>
@@ -204,7 +204,7 @@ export default function ResultsPage() {
             <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
               {"//"}
             </span>
-            <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
+            <span className="text-text-primary font-mono text-xs md:text-sm font-semibold">
               correções sugeridas
             </span>
           </div>
@@ -220,11 +220,11 @@ export default function ResultsPage() {
         <div className="flex flex-col sm:flex-row justify-center w-full gap-3 sm:gap-4">
           <Link href="/roast">
             <Button variant="secondary" className="w-full sm:w-auto">
-              $ analisar novo código
+              Analisar novo código
             </Button>
           </Link>
           <Button variant="outline" className="w-full sm:w-auto">
-            $ compartilhar resultado
+            Compartilhar resultado
           </Button>
         </div>
       </PageContainer>

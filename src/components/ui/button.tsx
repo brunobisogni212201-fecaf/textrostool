@@ -5,7 +5,7 @@ const button = tv(
   {
     base: [
       "inline-flex items-center justify-center gap-2",
-      "font-roboto font-semibold transition-all duration-200 ease-out",
+      "font-roboto font-medium transition-all duration-200 ease-out",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent-green",
       "disabled:opacity-50 disabled:cursor-not-allowed",
       "active:scale-[0.98]", // smooth press effect

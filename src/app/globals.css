@@ -89,6 +89,9 @@ body {
   background-color: #0A0A0A;
   color: #FAFAFA;
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {

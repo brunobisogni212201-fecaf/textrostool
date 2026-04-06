@@ -60,7 +60,7 @@ export default function HomePage() {
               $
             </span>
             <h1 className="font-mono text-3xl lg:text-5xl font-bold text-foreground">
-              Analise seu código com IA
+              Análise de código por IA
             </h1>
           </div>
           <p className="text-text-secondary font-mono text-sm lg:text-base">
@@ -94,7 +94,7 @@ export default function HomePage() {
             onClick={handleSubmit}
             disabled={!code.trim() || isSubmitting}
           >
-            {isSubmitting ? "preparando..." : "$ analisar código"}
+            {isSubmitting ? "preparando..." : "Analisar código"}
           </Button>
         </div>
 
@@ -116,7 +116,7 @@ export default function HomePage() {
               <span className="text-accent-green font-mono text-xs lg:text-sm font-bold">
                 {"//"}
               </span>
-              <span className="text-text-primary font-mono text-xs lg:text-sm font-bold">
+              <span className="text-text-primary font-mono text-xs lg:text-sm font-semibold">
                 ranking da comunidade
               </span>
             </div>

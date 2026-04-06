@@ -84,7 +84,7 @@ export default function LeaderboardPage() {
     <main className="min-h-[calc(100vh-56px)] bg-background flex justify-center items-center py-12 lg:py-20">
       <PageContainer className="flex flex-col items-center justify-center w-full max-w-[960px] space-y-12 lg:space-y-16 mx-auto">
         <div className="text-center w-full max-w-3xl space-y-4 md:space-y-6">
-          <h1 className="text-3xl md:text-4xl font-bold font-mono text-foreground">
+          <h1 className="text-3xl md:text-4xl font-semibold font-mono text-foreground">
             <span className="text-accent-green">{"// "}</span>
             ranking global
           </h1>
@@ -123,7 +123,7 @@ export default function LeaderboardPage() {
               <span className="text-accent-green font-mono text-xs md:text-sm font-bold">
                 {"//"}
               </span>
-              <span className="text-text-primary font-mono text-xs md:text-sm font-bold">
+              <span className="text-text-primary font-mono text-xs md:text-sm font-semibold">
                 últimas análises
               </span>
             </div>
@@ -147,7 +147,7 @@ export default function LeaderboardPage() {
 
           <div className="flex justify-center">
             <Link href="/roast">
-              <Button className="w-full sm:w-auto">$ analisar meu código</Button>
+              <Button className="w-full sm:w-auto">Analisar meu código</Button>
             </Link>
           </div>
         </div>
